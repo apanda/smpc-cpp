@@ -16,6 +16,7 @@ int main (int argc, char** argv) {
     smpc::rng(br);
     uint64_t a = 2;
     uint64_t b = 3;
+    std::cout << "Multiplying " << a << " " << b << std::endl;
     smpc::produceShares(a, a_shares, NSHARES);
     smpc::produceShares(b, b_shares, NSHARES);
     smpc::mulGetShares(a_shares[0], b_shares[0], c0_shares, NSHARES);
