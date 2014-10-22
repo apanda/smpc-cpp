@@ -6,12 +6,12 @@
 
 namespace smpc {
   void mulGetShares (
-            uint64_t a,
-            uint64_t b,
-            uint64_t* shares, 
+            int32_t a,
+            int32_t b,
+            int32_t* shares, 
             size_t nshares);
 
-  uint64_t mulCombineShares (
-          uint64_t* shares,
+  int32_t mulCombineShares (
+          int32_t* shares,
           size_t nshares);
 }

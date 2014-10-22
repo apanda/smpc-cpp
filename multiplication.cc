@@ -2,37 +2,30 @@
 #include "multiplication.h"
 namespace {
   // Multiply modulo smpc::field_size 
-  uint64_t multMod128(uint64_t a, uint64_t b) {
-    __uint128_t prod = 
-            (__uint128_t) a *
-             (__uint128_t) b;
-    __uint128_t mprod = prod % smpc::field_size;
-    return (uint64_t) mprod;
-  }
-  uint64_t multMod(uint64_t a, uint64_t b) {
-    uint64_t prod;
-    bool overflow; 
-    overflow = __builtin_umulll_overflow(a, b, &prod);
-    assert(!overflow);
-    uint64_t mprod = prod % smpc::field_size;
-    return mprod;
+  int32_t multMod64(int32_t a, int32_t b) {
+    int64_t prod = 
+            (int64_t) a *
+             (int64_t) b;
+    int64_t mprod = prod % (uint64_t) smpc::field_size;
+    uint64_t mask = 0xffffffff00000000ull;
+    assert(!(mprod & mask));
+    return (int32_t) mprod;
   }
 }
 
 namespace smpc {
   void mulGetShares (
-            uint64_t a,
-            uint64_t b,
-            uint64_t* shares, 
+            int32_t a,
+            int32_t b,
+            int32_t* shares, 
             size_t nshares) {
-    uint64_t prod = multMod(a, b);
-    uint64_t prod128 = multMod128(a, b);
-    assert(prod == prod128);
-    produceShares (prod, shares, nshares);
+    int32_t prod64 = multMod64(a, b);
+    produceShares (prod64, shares, nshares);
   }
-  uint64_t mulCombineShares (
-          uint64_t* shares,
+  int32_t mulCombineShares (
+          int32_t* shares,
           size_t nshares) {
-    return interpolate(shares, nshares); 
+    int32_t comb64 = interpolate64(shares, nshares);
+    return comb64;
   }
 }

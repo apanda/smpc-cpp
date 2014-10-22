@@ -14,28 +14,28 @@ namespace smpc {
     fclose(f);
     return r == 1;
   }
-  uint64_t modPow (uint64_t num, uint32_t exp, uint64_t mod);
+  int64_t modPow (int64_t num, uint32_t exp, int64_t mod);
 }
 
 // Compatibility functions for clang 
 #ifndef __clang__
+inline bool __builtin_smul_overflow(int32_t a, int32_t b, int32_t* result) {
+  *result = a * b;
+  return false;
+}
 inline bool __builtin_umulll_overflow(uint64_t a, uint64_t b, uint64_t* result) {
   *result = a * b;
   return false;
 }
-inline bool __builtin_uaddll_overflow(uint64_t a, uint64_t b, uint64_t* result) {
+inline bool __builtin_sadd_overflow(int32_t a, int32_t b, int32_t* result) {
   *result = a + b;
   return false;
 }
-inline bool __builtin_smulll_overflow(int64_t a, int64_t b, int64_t* result) {
-  *result = a * b;
-  return false;
-}
-inline bool __builtin_ssubll_overflow(int64_t a, int64_t b, int64_t* result) {
+inline bool __builtin_ssub_overflow(int32_t a, int32_t b, int32_t* result) {
   *result = a - b;
   return false;
 }
-inline bool __builtin_saddll_overflow(int64_t a, int64_t b, int64_t* result) {
+inline bool __builtin_sadd_overflow(int32_t a, int32_t b, int32_t* result) {
   *result = a + b;
   return false;
 }
