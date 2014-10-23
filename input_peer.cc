@@ -23,15 +23,15 @@ namespace smpc {
       int32_t inp = share + 2; //TODO: Sepia says 0 and 1 are bad.
       shares[share] = 0;
       // Evaluate polynomial at point
-      uint64_t shareSum = 0;
+      int64_t shareSum = 0;
       for (int32_t deg = 0; deg < degree + 1; deg++) {
-        uint64_t val = modPow((uint64_t)inp, deg, field_size);
-        uint64_t prod;
-        bool overflow = __builtin_umulll_overflow((uint64_t)coeffs[deg], val, &prod);
+        int64_t val = modPow((int64_t)inp, deg, field_size);
+        int64_t prod;
+        bool overflow = __builtin_smulll_overflow((int64_t)coeffs[deg], val, &prod);
         assert (!overflow);
-        overflow = __builtin_uaddll_overflow(shareSum, (prod % ((uint64_t)field_size)), &shareSum);
+        overflow = __builtin_saddll_overflow(shareSum, (prod % ((int64_t)field_size)), &shareSum);
         assert (!overflow);
-        shareSum = shareSum % (uint64_t)field_size;
+        shareSum = shareSum % (int64_t)field_size;
       }
       shares[share] = (int32_t) shareSum;
     }
@@ -58,9 +58,9 @@ namespace smpc {
       int64_t result = lagrange * (int64_t)shares[share];
       fin = (fin + result) % field_size;
     }
-    uint64_t finish = (uint64_t)(fin) % field_size;
-    const uint64_t mask = 0xffffffff00000000ull;
-    assert(!(finish & mask));
+    int64_t finish = (int64_t)(fin) % field_size;
+    //const uint64_t mask = 0xffffffff00000000ull;
+    //assert(!(finish & mask));
     return (int32_t) fin;
   }
 };

@@ -23,7 +23,7 @@ inline bool __builtin_smul_overflow(int32_t a, int32_t b, int32_t* result) {
   *result = a * b;
   return false;
 }
-inline bool __builtin_umulll_overflow(uint64_t a, uint64_t b, uint64_t* result) {
+inline bool __builtin_smulll_overflow(int64_t a, int64_t b, int64_t* result) {
   *result = a * b;
   return false;
 }
@@ -31,12 +31,12 @@ inline bool __builtin_sadd_overflow(int32_t a, int32_t b, int32_t* result) {
   *result = a + b;
   return false;
 }
-inline bool __builtin_ssub_overflow(int32_t a, int32_t b, int32_t* result) {
-  *result = a - b;
+inline bool __builtin_saddll_overflow(int64_t a, int64_t b, int64_t* result) {
+  *result = a + b;
   return false;
 }
-inline bool __builtin_sadd_overflow(int32_t a, int32_t b, int32_t* result) {
-  *result = a + b;
+inline bool __builtin_ssub_overflow(int32_t a, int32_t b, int32_t* result) {
+  *result = a - b;
   return false;
 }
 #endif

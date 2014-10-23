@@ -7,8 +7,6 @@ namespace {
             (int64_t) a *
              (int64_t) b;
     int64_t mprod = prod % (uint64_t) smpc::field_size;
-    uint64_t mask = 0xffffffff00000000ull;
-    assert(!(mprod & mask));
     return (int32_t) mprod;
   }
 }
