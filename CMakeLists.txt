@@ -15,12 +15,27 @@ include_directories(${smpc_SOURCE_DIR}/includes)
     #message(FATAL_ERROR "Boost 1.55 not found")
 #endif(Boost_FOUND)
 
+find_package(igraph)
+if (IGRAPH_FOUND)
+    include_directories(${IGRAPH_INCLUDE_DIRS})
+    message(${IGRAPH_INCLUDE_DIRS})
+else()
+    message(FATAL_ERROR "igraph not found")
+endif (IGRAPH_FOUND)
+
 file(GLOB smpc_sources . lib/*.cc)
-add_executable(smpc_test ${smpc_sources} main.cc)
+file(GLOB unit_tests . tests/*.cc)
+file(GLOB test_topos . topos/*.cc)
+
+add_executable(smpc_test ${smpc_sources} ${test_topos} main.cc)
+add_executable(tests ${unit_tests} ${smpc_sources} ${test_topos})
+
+target_link_libraries(smpc_test ${IGRAPH_LIBRARIES}) 
+target_link_libraries(tests ${IGRAPH_LIBRARIES}) 
+
+enable_testing()
+add_test(NAME unit COMMAND tests)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     find_package (Threads)
 endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-file(GLOB unit_tests . tests/*.cc)
-add_executable(tests ${unit_tests} ${smpc_sources})
-enable_testing()
-add_test(NAME unit COMMAND tests)
