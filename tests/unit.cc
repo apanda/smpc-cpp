@@ -46,7 +46,7 @@ TEST_CASE ("Truth table test", "[ttable0]") {
 }
 
 TEST_CASE ("Graph check", "[graph]") {
-  smpc::example::BGPProblem graph;
+  smpc::BGPProblem graph;
   smpc::example::exampleTopo1(&graph);
   igraph_vs_t vs;
   igraph_vs_nonadj(&vs, 0, IGRAPH_ALL);
