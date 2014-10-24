@@ -59,8 +59,6 @@ namespace smpc {
       fin = (fin + result) % field_size;
     }
     int64_t finish = (int64_t)(fin) % field_size;
-    //const uint64_t mask = 0xffffffff00000000ull;
-    //assert(!(finish & mask));
     return (int32_t) fin;
   }
 };
