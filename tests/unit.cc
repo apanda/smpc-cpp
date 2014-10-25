@@ -3,6 +3,7 @@
 #include "truth_table.h"
 #include "catch.h"
 #include "egtopos.h"
+#include "unsecproto.h"
 
 TEST_CASE ("Prod Sum Simple Test", "[psum0]" ) {
   int32_t array[] = {-2, -1, 0, 1, 2};
@@ -77,7 +78,6 @@ TEST_CASE ("Graph check", "[graph]") {
   igraph_vs_nonadj(&vs, 6, IGRAPH_ALL);
   igraph_vs_size(&graph.graph, &vs, &size);
   REQUIRE(size == 5);
-#define index_for(i, j) ((i * graph.nodes) + j)
   for (int i = 0; i < graph.nodes; i++) {
     for (int j = 0; j < graph.nodes; j++) {
       bool provider = (graph.provider(i, j) == 1) &&
@@ -95,4 +95,50 @@ TEST_CASE ("Graph check", "[graph]") {
       REQUIRE(correct);
     }
   }
+}
+
+TEST_CASE ("Unsec BGP check", "[ubgp]") {
+  smpc::BGPProblem graph;
+  smpc::example::exampleTopo1(&graph);
+  uint32_t nhop[graph.nodes];
+  REQUIRE(unsecurePathComputaton(&graph, 0, nhop, graph.nodes));
+  REQUIRE(nhop[0] == 0);
+  REQUIRE(nhop[1] == 0);
+  REQUIRE(nhop[2] == 0);
+  REQUIRE(nhop[3] == 2);
+  REQUIRE(nhop[4] == 2);
+  REQUIRE(nhop[5] == 1);
+  REQUIRE(nhop[6] == 0);
+  REQUIRE(unsecurePathComputaton(&graph, 1, nhop, graph.nodes));
+  REQUIRE(nhop[0] == 1);
+  REQUIRE(nhop[1] == 1);
+  REQUIRE(nhop[2] == 0);
+  REQUIRE(nhop[3] == 2);
+  REQUIRE(nhop[4] == 2);
+  REQUIRE(nhop[5] == 1);
+  REQUIRE(nhop[6] == 1);
+  REQUIRE(unsecurePathComputaton(&graph, 2, nhop, graph.nodes));
+  REQUIRE(nhop[0] == 2);
+  REQUIRE(nhop[1] == 0);
+  REQUIRE(nhop[2] == 2);
+  REQUIRE(nhop[3] == 2);
+  REQUIRE(nhop[4] == 2);
+  REQUIRE(nhop[5] == 1);
+  REQUIRE(nhop[6] == 0);
+  REQUIRE(unsecurePathComputaton(&graph, 3, nhop, graph.nodes));
+  REQUIRE(nhop[0] == 2);
+  REQUIRE(nhop[1] == 0);
+  REQUIRE(nhop[2] == 3);
+  REQUIRE(nhop[3] == 3);
+  REQUIRE(nhop[4] == 2);
+  REQUIRE(nhop[5] == 3);
+  REQUIRE(nhop[6] == 0);
+  REQUIRE(unsecurePathComputaton(&graph, 5, nhop, graph.nodes));
+  REQUIRE(nhop[0] == 1);
+  REQUIRE(nhop[1] == 5);
+  REQUIRE(nhop[2] == 0);
+  REQUIRE(nhop[3] == 5);
+  REQUIRE(nhop[4] == 2);
+  REQUIRE(nhop[5] == 5);
+  REQUIRE(nhop[6] == 1);
 }

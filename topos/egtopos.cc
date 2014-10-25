@@ -50,7 +50,7 @@ void exampleTopo1 (BGPProblem* graph) {
   graph->_provider = provider;
   graph->_customer = customer;
   graph->_peer = peer;
-  graph->depth = 4;
+  graph->depth = 5;
   graph->nodes = 7;
 }
 
