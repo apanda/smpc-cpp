@@ -4,45 +4,93 @@
 #include "catch.h"
 #include "egtopos.h"
 #include "unsecproto.h"
+#include <gmp.h>
 
 TEST_CASE ("Prod Sum Simple Test", "[psum0]" ) {
-  int32_t array[] = {-2, -1, 0, 1, 2};
-  int32_t array2[] = {0, 1, 2};
-  REQUIRE (smpc::combinationProdSum(array, 5, 1) == 0);
-  REQUIRE (smpc::combinationProdSum(array, 5, 2) == -5);
-  REQUIRE (smpc::combinationProdSum(array, 5, 3) == 0);
-  REQUIRE (smpc::combinationProdSum(array, 5, 4) == 4);
-  REQUIRE (smpc::combinationProdSum(array, 5, 0) == 1);
-  REQUIRE (smpc::combinationProdSum(array2, 3, 0) == 1);
+  //int32_t array[] = {-2, -1, 0, 1, 2};
+  //int32_t array2[] = {0, 1, 2};
+  mpz_t array[5];
+  mpz_t array2[3];
+  mpz_t sum;
+  mpz_init_set_si(array[0], -2);
+  mpz_init_set_si(array[1], -1);
+  mpz_init_set_si(array[2], 0);
+  mpz_init_set_si(array[3], 1);
+  mpz_init_set_si(array[4], 2);
+
+  mpz_init_set_si(array2[0], 0);
+  mpz_init_set_si(array2[1], 1);
+  mpz_init_set_si(array2[2], 2);
+  mpz_init(sum);
+  smpc::combinationProdSum(sum, array, 5, 1);
+  REQUIRE (mpz_cmp_si(sum, 0) == 0);
+  smpc::combinationProdSum(sum, array, 5, 2);
+  REQUIRE (mpz_cmp_si(sum, -5) == 0);
+  smpc::combinationProdSum(sum, array, 5, 3);
+  REQUIRE (mpz_cmp_si(sum, 0) == 0);
+  smpc::combinationProdSum(sum, array, 5, 4);
+  REQUIRE (mpz_cmp_si(sum, 4) == 0);
+  smpc::combinationProdSum(sum, array, 5, 0);
+  REQUIRE (mpz_cmp_si(sum, 1) == 0);
+  smpc::combinationProdSum(sum, array2, 3, 0);
+  REQUIRE (mpz_cmp_si(sum, 1) == 0);
+  mpz_clear(sum);
+  for (int i = 0; i < 3; i++) {
+    mpz_clear(array2[i]);
+  }
+  for (int i = 0; i < 5; i++) {
+    mpz_clear(array[i]);
+  }
 }
 
 TEST_CASE ("Truth table test", "[ttable0]") {
-  int64_t coeffs[23];
-  int64_t d_coeff;
+  mpz_t coeffs[23];
+  for (int i = 0; i < 23; i++) {
+    mpz_init(coeffs[i]);
+  }
+  mpz_t d_coeff;
+  mpz_init(d_coeff);
+  mpz_t result;
+  mpz_init(result);
+  mpz_t x;
+  mpz_init(x);
   smpc::truthTable(1, coeffs, d_coeff);
-  REQUIRE(d_coeff > 0);
-  REQUIRE(smpc::evalTruthTable(1, coeffs, d_coeff, -1) == 0);
-  REQUIRE(smpc::evalTruthTable(1, coeffs, d_coeff, 0) == 0);
-  REQUIRE(smpc::evalTruthTable(1, coeffs, d_coeff, 1) == 1);
+  REQUIRE(mpz_cmp_si(d_coeff, 0) != 0);
 
-  smpc::truthTable(2, coeffs, d_coeff);
-  REQUIRE(d_coeff != 0);
-  REQUIRE(smpc::evalTruthTable(2, coeffs, d_coeff, -2) == 0);
-  REQUIRE(smpc::evalTruthTable(2, coeffs, d_coeff, -1) == 0);
-  REQUIRE(smpc::evalTruthTable(2, coeffs, d_coeff, 0) == 0);
-  REQUIRE(smpc::evalTruthTable(2, coeffs, d_coeff, 1) == 1);
-  REQUIRE(smpc::evalTruthTable(2, coeffs, d_coeff, 2) == 1);
+  mpz_set_si(x, -1);
+  smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
+  REQUIRE(mpz_cmp_si(result, 0) == 0);
 
-  for (int32_t d = 4; d < 7; d++) {
+  mpz_set_si(x, 0);
+  smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
+  REQUIRE(mpz_cmp_si(result, 0) == 0);
+
+  mpz_set_si(x, 1);
+  smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
+  REQUIRE(mpz_cmp_si(result, 1) == 0);
+
+  //gmp_printf("Coeffs are %Zd %Zd %Zd, denom %Zd\n", coeffs[0], coeffs[1], coeffs[2], d_coeff);
+
+  for (int32_t d = 4; d < 11; d++) {
     smpc::truthTable(d, coeffs, d_coeff);
-    REQUIRE(d_coeff != 0);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, -4) == 0);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, -2) == 0);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, -1) == 0);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, 0) == 0);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, 1) == 1);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, 2) == 1);
-    REQUIRE(smpc::evalTruthTable(d, coeffs, d_coeff, 4) == 1);
+    gmp_printf("For %d d_coeff = %Zd coeffs = ", d, d_coeff);
+    for (size_t i = 0; i < (2 * d + 1); i++) {
+      gmp_printf("%Zd ", coeffs[i]);
+    }
+    printf("\n");
+    REQUIRE(mpz_cmp_si(d_coeff, 0) != 0);
+    for (int32_t t = -d; t <= 0; t++) {
+      mpz_set_si(x, t);
+      smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
+      gmp_printf("%d %Zd %Zd\n", d, x, result);
+      REQUIRE(mpz_cmp_si(result, 0) == 0);
+    }
+    for (int32_t t = 1; t <= d; t++) {
+      mpz_set_si(x, t);
+      smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
+      gmp_printf("%d %Zd %Zd\n", d, x, result);
+      REQUIRE(mpz_cmp_si(result, 1) == 0);
+    }
   }
 }
 

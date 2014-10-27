@@ -1,17 +1,19 @@
 #include <cassert>
 #include <stdint.h>
 #include <cstdio>
+#include <gmp.h>
 #include "utils.h"
 #pragma once
 
 namespace smpc {
   void mulGetShares (
-            int32_t a,
-            int32_t b,
-            int32_t* shares, 
+            const mpz_t& a,
+            const mpz_t& b,
+            mpz_t* shares, 
             size_t nshares);
 
-  int32_t mulCombineShares (
-          int32_t* shares,
+  void mulCombineShares (
+          mpz_t& result,
+          const mpz_t* shares,
           size_t nshares);
 }
