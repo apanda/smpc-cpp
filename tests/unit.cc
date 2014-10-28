@@ -73,22 +73,15 @@ TEST_CASE ("Truth table test", "[ttable0]") {
 
   for (int32_t d = 4; d < 11; d++) {
     smpc::truthTable(d, coeffs, d_coeff);
-    gmp_printf("For %d d_coeff = %Zd coeffs = ", d, d_coeff);
-    for (size_t i = 0; i < (2 * d + 1); i++) {
-      gmp_printf("%Zd ", coeffs[i]);
-    }
-    printf("\n");
     REQUIRE(mpz_cmp_si(d_coeff, 0) != 0);
     for (int32_t t = -d; t <= 0; t++) {
       mpz_set_si(x, t);
-      smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
-      gmp_printf("%d %Zd %Zd\n", d, x, result);
+      smpc::evalTruthTable(result, d, coeffs, d_coeff, x);
       REQUIRE(mpz_cmp_si(result, 0) == 0);
     }
     for (int32_t t = 1; t <= d; t++) {
       mpz_set_si(x, t);
-      smpc::evalTruthTable(result, 1, coeffs, d_coeff, x);
-      gmp_printf("%d %Zd %Zd\n", d, x, result);
+      smpc::evalTruthTable(result, d, coeffs, d_coeff, x);
       REQUIRE(mpz_cmp_si(result, 1) == 0);
     }
   }

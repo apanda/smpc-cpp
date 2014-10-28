@@ -17,7 +17,6 @@
 namespace smpc {
   // Expect coeffs to be of size 2 * depth + 1
   void truthTable (uint64_t depth, mpz_t* coeffs, mpz_t& d_coeff) {
-    printf("Depth is %llu\n", depth);
     mpz_t comb[2*depth];
     for (size_t i = 0; i < (2 * depth); i++) {
       mpz_set_si(coeffs[i], 0);
@@ -49,7 +48,6 @@ namespace smpc {
         combinationProdSum(temp2, comb, 2 * depth, j);
         mpz_mul(temp2, d_coeff, temp2);
         mpz_mul(temp, denom, coeffs[j]);
-        //gmp_printf("For j=%d temp=%Zd, temp2=%Zd\n", j, temp, temp2);
         mpz_add(coeffs[j], temp, temp2);
       }
       mpz_mul(d_coeff, d_coeff, denom);
@@ -76,8 +74,8 @@ namespace smpc {
       //int64_t val = ipow(x, exp);
       mpz_pow_ui(temp1, x, exp);
       //sum += (coeffs[i] * val);
-      mpz_mul(temp1, temp1, coeffs[i]);
-      mpz_add(result, result, temp1);
+      //mpz_mul(temp1, temp1, coeffs[i]);
+      mpz_addmul(result, coeffs[i], temp1);
     }
     mpz_clear(temp1);
     mpz_tdiv_q(result, result, d_coeff);
